@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 networks:
   web:
@@ -26,7 +26,7 @@ services:
       - variables.env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.back.rule=Host(`backtaiga.valeapna.com`)"
+      - "traefik.http.routers.back.rule=Host(`backfinancas.valeapna.com`)"
       - "traefik.http.routers.back.tls.certresolver=lets-encrypt"
       - "traefik.http.routers.back.tls=true"
       - "traefik.port=2222"
@@ -46,7 +46,7 @@ services:
       - variables.env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.front.rule=Host(`taiga.valeapna.com`)"
+      - "traefik.http.routers.front.rule=Host(`financas.valeapna.com`)"
       - "traefik.http.routers.front.tls.certresolver=lets-encrypt"
       - "traefik.http.routers.front.tls=true"
       - "traefik.port=80"
@@ -78,7 +78,7 @@ services:
       - web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.pgadmin.rule=Host(`pgadmtaiga.valeapna.com`)"
+      - "traefik.http.routers.pgadmin.rule=Host(`pgadminfinancas.valeapna.com`)"
       - "traefik.http.routers.pgadmin.tls.certresolver=lets-encrypt"
       - "traefik.http.routers.pgadmin.tls=true"
       - "traefik.port=5151"
@@ -96,7 +96,7 @@ services:
       - web
     labels:
       - "traefik.enable=false"
-    
+
   redis:
     image: bitnami/redis:5.0
     container_name: taiga-redis
@@ -110,7 +110,7 @@ services:
       - web
     labels:
       - "traefik.enable=false"
-    
+
   events:
     image: dockertaiga/events
     container_name: taiga-events
@@ -130,7 +130,7 @@ services:
       - "traefik.http.routers.events.tls.certresolver=lets-encrypt"
       - "traefik.http.routers.events.tls=true"
       - "traefik.port=6000"
-      
+
   traefik:
     image: traefik:v2.3
     container_name: taiga-traefik
