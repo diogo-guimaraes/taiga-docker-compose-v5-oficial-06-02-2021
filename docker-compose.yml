@@ -1,0 +1,148 @@
+version: '3'
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
+services:
+  back:
+    image: dockertaiga/back:5.5.5
+    container_name: taiga-back
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+    depends_on:
+      - db
+      - events
+    networks:
+      - internal
+      - web
+    volumes:
+      - ./data/media:/taiga-media
+      - ./conf/back:/taiga-conf
+    env_file:
+      - variables.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.back.rule=Host(`backtaiga.valeapna.com`)"
+      - "traefik.http.routers.back.tls.certresolver=lets-encrypt"
+      - "traefik.http.routers.back.tls=true"
+      - "traefik.port=2222"
+
+  front:
+    image: dockertaiga/front:5.5.5
+    container_name: taiga-front
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+    networks:
+      - internal
+      - web
+    volumes:
+      - ./conf/front:/taiga-conf
+    env_file:
+      - variables.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.front.rule=Host(`taiga.valeapna.com`)"
+      - "traefik.http.routers.front.tls.certresolver=lets-encrypt"
+      - "traefik.http.routers.front.tls=true"
+      - "traefik.port=80"
+
+  db:
+    image: postgres:11-alpine
+    container_name: taiga-db
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+    env_file:
+      - variables.env
+    networks:
+      - internal
+    labels:
+      - "traefik.enable=false"
+
+  pgadmin:
+    image: dpage/pgadmin4:4.28
+    container_name: taiga-pgadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=conta@aquivaleapena.com
+      - PGADMIN_DEFAULT_PASSWORD=pna229933
+    networks:
+      - internal
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`pgadmtaiga.valeapna.com`)"
+      - "traefik.http.routers.pgadmin.tls.certresolver=lets-encrypt"
+      - "traefik.http.routers.pgadmin.tls=true"
+      - "traefik.port=5151"
+
+  rabbit:
+    image: dockertaiga/rabbit
+    container_name: taiga-rabbit
+    restart: always
+    logging:
+      driver: "json-file"
+    env_file:
+      - variables.env
+    networks:
+      - internal
+      - web
+    labels:
+      - "traefik.enable=false"
+    
+  redis:
+    image: bitnami/redis:5.0
+    container_name: taiga-redis
+    restart: always
+    logging:
+      driver: "json-file"
+    env_file:
+      - variables.env
+    networks:
+      - internal
+      - web
+    labels:
+      - "traefik.enable=false"
+    
+  events:
+    image: dockertaiga/events
+    container_name: taiga-events
+    restart: always
+    logging:
+      driver: "json-file"
+    depends_on:
+      - rabbit
+    env_file:
+      - variables.env
+    networks:
+      - internal
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.events.rule=Host(`eventstaiga.valeapna.com`)"
+      - "traefik.http.routers.events.tls.certresolver=lets-encrypt"
+      - "traefik.http.routers.events.tls=true"
+      - "traefik.port=6000"
+      
+  traefik:
+    image: traefik:v2.3
+    container_name: taiga-traefik
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/traefik.toml:/traefik.toml"
+      - "./traefik/traefik_dynamic.toml:/traefik_dynamic.toml"
+      - "./traefik/acme.json:/acme.json"
+    networks:
+      - internal
+      - web

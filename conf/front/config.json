@@ -1,0 +1,22 @@
+{
+    "api": "https://backtaiga.valeapna.com/api/v1/",
+    "eventsUrl": "wss://eventstaiga.valeapna.com/events/",
+    "eventsMaxMissedHeartbeats": 6,
+    "eventsHeartbeatIntervalTime": 15000,
+    "eventsReconnectTryInterval": 10000,
+    "debug": true,
+    "debugInfo": false,
+    "defaultLanguage": "pt-br",
+    "defaultTheme": "taiga",
+    "publicRegisterEnabled": false,
+    "gravatar": true,
+    "feedbackEnabled": false,
+    "supportUrl": "https://aquivaleapena.com",
+    "privacyPolicyUrl": null,
+    "termsOfServiceUrl": null,
+    "maxUploadFileSize": null,
+    "maxPostSize": null,
+    "contribPlugins": [],
+    "tribeHost": null,
+    "importers": []
+}

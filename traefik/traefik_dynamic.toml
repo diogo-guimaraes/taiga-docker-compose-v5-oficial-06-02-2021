@@ -1,0 +1,19 @@
+[http.middlewares.simpleAuth.basicAuth]
+  users = [
+    "admin:$apr1$L2L.IKmA$ndFIaC6WOtGefPFg5rzQq/"
+  ]
+
+[http.routers.api]
+  rule = "Host(`monitortaiga.valeapna.com`)"
+  entrypoints = ["websecure"]
+  middlewares = ["simpleAuth"]
+  service = "api@internal"
+  [http.routers.api.tls]
+    certResolver = "lets-encrypt"
+
+[tls.options]
+  [tls.options.default]
+    minVersion = "VersionTLS12"
+
+  [tls.options.mintls13]
+    minVersion = "VersionTLS13"
